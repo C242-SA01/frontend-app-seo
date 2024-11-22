@@ -10,6 +10,9 @@ module.exports = {
       colors: {
         primary: "#FFBB38",
       },
+      colors: {
+        primary: "#FFBB38", // Warna primary kustom
+      },
     },
   },
   plugins: [require("daisyui")],
