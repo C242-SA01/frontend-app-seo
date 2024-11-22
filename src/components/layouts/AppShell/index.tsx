@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Navbar from "../Navbar";
+import HomePage from "@/pages/home";
 type AppShellProps = {
   children: React.ReactNode;
 };
@@ -12,6 +13,7 @@ const AppShell = (props: AppShellProps) => {
     <main>
       {!disableNavbar.includes(pathname) && <Navbar />}
       {children}
+      <></>
     </main>
   );
 };
