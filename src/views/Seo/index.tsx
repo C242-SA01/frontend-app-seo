@@ -16,15 +16,15 @@ const HistoryView = ({ histories }: { histories: HistoriesType[] }) => {
           ))}
         </>
       ) : (
-        <div className="flex w-52 flex-col gap-4">
+        <div className="flex flex-col gap-4 w-52 bg">
           <div className="flex items-center gap-4">
-            <div className="skeleton h-16 w-16 shrink-0 rounded-full"></div>
+            <div className="w-16 h-16 rounded-full skeleton shrink-0"></div>
             <div className="flex flex-col gap-4">
-              <div className="skeleton h-4 w-20"></div>
-              <div className="skeleton h-4 w-28"></div>
+              <div className="w-20 h-4 skeleton"></div>
+              <div className="h-4 skeleton w-28"></div>
             </div>
           </div>
-          <div className="skeleton h-32 w-full"></div>
+          <div className="w-full h-32 skeleton"></div>
         </div>
       )}
       {histories.map((history: HistoriesType) => (
