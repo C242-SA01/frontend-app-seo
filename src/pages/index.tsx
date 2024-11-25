@@ -11,7 +11,6 @@ export default function Home() {
       <Head>
         <title>SEO Bizzagi</title>
       </Head>
-      {/* Panggil Komponen HomeHero */}
       <Homepage />
     </div>
   );
