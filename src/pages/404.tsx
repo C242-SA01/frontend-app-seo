@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Custom404 = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="text-center">
         {/* Illustration */}
         <div className="mb-8">

@@ -1,34 +1,61 @@
-import HistoryView from "@/views/Seo";
+import Footer from "@/components/layouts/Footer";
+import AuditHistory from "@/views/Seo";
 import { Inter } from "next/font/google";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Timestamp } from "firebase/firestore"; // Import Timestamp
 
 const inter = Inter({ subsets: ["latin"] });
-type historyType = {
+
+type HistoryType = {
   id: string;
-  url: string;
-  name: string;
+  clientName: string;
+  websiteURL: string;
+  createdAt: string;
 };
+
 const HistoryPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [histories, setHistories] = useState([]);
+  const [histories, setHistories] = useState<HistoryType[]>([]);
   const { push } = useRouter();
+
   useEffect(() => {
     if (!isLogin) {
       push("auth/login");
     }
-  }, []);
+  }, [isLogin]);
+
   useEffect(() => {
     fetch("/api/history")
       .then((res) => res.json())
       .then((response) => {
-        setHistories(response.data);
+        const mappedHistories = response.data.map((audit: any) => {
+          console.log(audit);
+          let createdAt = new Date();
+          const miliseconds = audit.createdAt.seconds * 1000 + audit.createdAt.nanoseconds / 1000000;
+          createdAt = new Date(miliseconds);
+          return {
+            id: audit.id,
+            clientName: audit.generalInfo.clientName,
+            websiteURL: audit.generalInfo.websiteURL,
+            createdAt: createdAt.toLocaleDateString(),
+          };
+        });
+
+        setHistories(mappedHistories);
       });
   }, []);
+
   return (
-    <div className="flex justify-center ">
-      <HistoryView histories={histories} />
+    <div className="text-center">
+      <Head>
+        <title>History</title>
+      </Head>
+      <AuditHistory data={histories} />
+      <Footer />
     </div>
   );
 };
+
 export default HistoryPage;

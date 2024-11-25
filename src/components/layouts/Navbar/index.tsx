@@ -5,7 +5,7 @@ import Link from "next/link";
 const Navbar: React.FC = () => {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState(router.pathname);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [username, setUsername] = useState("Guest");
   useEffect(() => {
     setActiveSection(router.pathname);
@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
             <li>
-              <Link href="/contact" className={`${activeSection === "/contact" ? "text-primary" : "text-gray-800"} hover:text-primary transition duration-300`}>
+              <Link href="#contact" className={`${activeSection === "#contact" ? "text-primary" : "text-gray-800"} hover:text-primary transition duration-300`}>
                 Contact
               </Link>
             </li>
