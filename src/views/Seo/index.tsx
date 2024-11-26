@@ -34,37 +34,43 @@ const AuditHistory: React.FC<AuditHistoryProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className={`cursor-pointer ${index % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-200`}
-              onClick={() => setSelectedAudit(item)} // Klik tr untuk membuka modal
-            >
-              <td className="px-4 py-2 border-b border-gray-300">{item.clientName}</td>
-              <td className="px-4 py-2 border-b border-gray-300">
-                <a
-                  href={item.websiteURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 underline"
-                  onClick={(e) => e.stopPropagation()} // Stop klik URL memicu modal
-                >
-                  {item.websiteURL}
-                </a>
-              </td>
-              <td className="px-4 py-2 border-b border-gray-300">{item.createdAt}</td>
-              <td className="px-4 py-2 text-center border-b border-gray-300">
-                <Link href={`/history/${item.id}`}>
-                  <button
-                    className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-                    onClick={(e) => e.stopPropagation()} // Stop klik tombol memicu modal
-                  >
-                    View Details
-                  </button>
-                </Link>
+          {data.length > 0 ? (
+            <>
+              {data.map((item, index) => (
+                <tr key={item.id} className={`cursor-pointer ${index % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-200`} onClick={() => setSelectedAudit(item)}>
+                  <td className="px-4 py-2 border-b border-gray-300">{item.clientName}</td>
+                  <td className="px-4 py-2 border-b border-gray-300">
+                    <a
+                      href={item.websiteURL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline"
+                      onClick={(e) => e.stopPropagation()} // Stop klik URL memicu modal
+                    >
+                      {item.websiteURL}
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 border-b border-gray-300">{item.createdAt}</td>
+                  <td className="px-4 py-2 text-center border-b border-gray-300">
+                    <Link href={`/history/${item.id}`}>
+                      <button
+                        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                        onClick={(e) => e.stopPropagation()} // Stop klik tombol memicu modal
+                      >
+                        View Details
+                      </button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </>
+          ) : (
+            <tr className="mt-4 bg-gray-50">
+              <td className="w-full h-12 skeleton" colSpan={4}>
+                Loading...
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
