@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Link as ScrollLink } from 'react-scroll';
+import { Link as ScrollLink } from "react-scroll";
 
 const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
   const router = useRouter();
@@ -21,10 +21,7 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
               <i className="ri-menu-line"></i>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-            >
+            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
               <li>
                 <Link href="/" className={activeSection === "/" ? "text-primary" : ""}>
                   Home
@@ -50,7 +47,7 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
             </span>
           </Link>
         </div>
-        <div className="hidden lg:flex justify-center w-full">
+        <div className="justify-center hidden w-full lg:flex">
           <ul className="flex space-x-8">
             <li>
               <Link href="/" className={`${activeSection === "/" ? "text-primary" : "text-black"} hover:text-primary transition duration-300`}>
@@ -58,7 +55,7 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
               </Link>
             </li>
             <li>
-              <Link href="/history" className={`${activeSection === "/history" ? "text-primary" : "text-black"} hover:text-primary transition duration-300`}>
+              <Link href="/history" className={`${activeSection === "/history" || activeSection === "/history/[id]" ? "text-primary" : "text-black"} hover:text-primary transition duration-300`}>
                 History
               </Link>
             </li>

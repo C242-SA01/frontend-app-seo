@@ -1,72 +1,85 @@
 import { fetcher } from "@/lib/swr/fetcher";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import PerformanceMetrics from "@/components/PerformanceMetrics";
+import AdditionalNotes from "@/components/AdditionalNotes";
+import AuditScore from "@/components/AuditScore";
+import ContentAnalysis from "@/components/ContentAnalysis";
+import GeneralInfo from "@/components/GeneralInfo";
+import MetadataTable from "@/components/MetadataTable";
+import Recommendation from "@/components/Recommendation";
 
 const DetailHistoryPage = () => {
   const { query } = useRouter();
 
-  // Pastikan SWR hanya memanggil API jika query.history tersedia
   const { data, error, isLoading } = useSWR(query.id ? `/api/history/${query.id}` : null, fetcher);
 
-  // Log untuk memastikan query dan respons API
-  console.log("Query ID:", query.history);
-  console.log("API Response:", data);
-
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center w-screen h-screen bg-gray-100">
+        <div className="space-y-4 w-[80%] max-w-2xl">
+          {/* Skeleton untuk Header */}
+          <div className="w-3/4 h-8 bg-gray-300 rounded skeleton"></div>
+          {/* Skeleton untuk Konten */}
+          <div className="space-y-2">
+            <div className="w-full h-6 bg-gray-300 rounded skeleton"></div>
+            <div className="w-4/5 h-6 bg-gray-300 rounded skeleton"></div>
+            <div className="w-3/5 h-6 bg-gray-300 rounded skeleton"></div>
+          </div>
+          {/* Skeleton untuk Tabel */}
+          <div className="w-full h-32 bg-gray-300 rounded skeleton"></div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return <p>Error loading data: {error.message}</p>;
   }
 
-  // Validasi data dari API
   if (!data || !data.status || !data.data) {
-    return <p>No data found for this ID</p>;
+    return <></>;
   }
 
   const detail = data.data;
 
+  // Konversi metrics menjadi array
+  const metricsArray = detail.metrics
+    ? Object.entries(detail.metrics).map(([key, value]) => ({
+        name: key,
+        value: value,
+      }))
+    : [];
+  const metadataArray = detail.metadataData
+    ? Object.entries(detail.metadataData).map(([key, value]) => ({
+        label: key,
+        value: value,
+      }))
+    : [];
+  const contentAnalysisArray = detail.contentAnalysisData
+    ? Object.entries(detail.contentAnalysisData).map(([key, value]) => ({
+        label: key,
+        value: value,
+      }))
+    : [];
+
   return (
     <div>
-      <h1>Detail History</h1>
-      <h2>General Information</h2>
-      <p>
-        <strong>Client Name:</strong> {detail.generalInfo.clientName}
-      </p>
-      <p>
-        <strong>Website URL:</strong> {detail.generalInfo.websiteURL}
-      </p>
-      <p>
-        <strong>Structure:</strong> {detail.generalInfo.structure}
-      </p>
-
-      <h2>Metrics</h2>
-      <p>
-        <strong>GTMetrix Grade:</strong> {detail.metrics["GTMetrix Grade"]}
-      </p>
-      <p>
-        <strong>GTMetrix Structure:</strong> {detail.metrics["GTMetrix Structure"]}
-      </p>
-      <p>
-        <strong>PageSpeed SEO:</strong> {detail.metrics["PageSpeed SEO"]}
-      </p>
-
-      <h2>Score Information</h2>
-      <p>
-        <strong>Score:</strong> {detail.scoreInfo.score}
-      </p>
-      <p>
-        <strong>Description:</strong> {detail.scoreInfo.description}
-      </p>
-
-      <h2>Content Analysis</h2>
-      <p>
-        <strong>Broken Links Count:</strong> {detail.contentAnalysisData["Broken Links Count"]}
-      </p>
-      <p>
-        <strong>Broken Links URL:</strong> {detail.contentAnalysisData["Broken Links URL"]}
-      </p>
+      <h1 className="my-8 text-2xl font-bold text-center">Detail History</h1>
+      <div className="grid grid-flow-row-dense grid-cols-3 grid-rows-1 gap-4 m-8 md:grid-cols-3">
+        <div className="col-span-2">
+          <GeneralInfo clientName={detail.generalInfo.clientName} websiteURL={detail.generalInfo.websiteURL} structure={detail.generalInfo.structure} />
+        </div>
+        {/* Audit Score (4/12) */}
+        <AuditScore score={detail.scoreInfo.score} description={detail.scoreInfo.description} />
+      </div>
+      <PerformanceMetrics metrics={metricsArray} />
+      <div className="m-8">
+        <ContentAnalysis contentData={contentAnalysisArray} />
+      </div>
+      <div className="m-8">
+        <MetadataTable metadata={metadataArray} />
+      </div>
     </div>
   );
 };

@@ -19,11 +19,11 @@ const HistoryPage = () => {
   const [histories, setHistories] = useState<HistoryType[]>([]);
   const { push } = useRouter();
 
-  useEffect(() => {
-    if (!isLogin) {
-      push("auth/login");
-    }
-  }, [isLogin]);
+  // useEffect(() => {
+  //   if (!isLogin) {
+  //     push("auth/login");
+  //   }
+  // }, [isLogin]);
 
   useEffect(() => {
     fetch("/api/history")
