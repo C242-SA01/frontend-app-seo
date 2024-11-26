@@ -2,7 +2,6 @@ import AdditionalNotes from "@/components/AdditionalNotes";
 import AuditScore from "@/components/AuditScore";
 import ContentAnalysis from "@/components/ContentAnalysis";
 import GeneralInfo from "@/components/GeneralInfo";
-import Footer from "@/components/layouts/Footer";
 import MetadataTable from "@/components/MetadataTable";
 import PerformanceMetrics from "@/components/PerformanceMetrics";
 import Recommendation from "@/components/Recommendation";
@@ -86,7 +85,6 @@ const ResultPage: React.FC = () => {
       <div className="m-8">
         <Recommendation />
       </div>
-      <Footer />
     </>
   );
 };

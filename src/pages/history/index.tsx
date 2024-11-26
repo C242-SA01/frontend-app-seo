@@ -1,4 +1,3 @@
-import Footer from "@/components/layouts/Footer";
 import AuditHistory from "@/views/Seo";
 import { Inter } from "next/font/google";
 import Head from "next/head";
@@ -53,7 +52,6 @@ const HistoryPage = () => {
         <title>History</title>
       </Head>
       <AuditHistory data={histories} />
-      <Footer />
     </div>
   );
 };
