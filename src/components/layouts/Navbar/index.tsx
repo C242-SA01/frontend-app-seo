@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Link as ScrollLink } from 'react-scroll';
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState(router.pathname);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -35,18 +35,20 @@ const Navbar: React.FC = () => {
                   History
                 </Link>
               </li>
-              <li>
-                <ScrollLink to="contact" smooth={true} duration={500} className={activeSection === "/contact" ? "text-primary" : ""}>
-                  Contact Us
-                </ScrollLink>
-              </li>
+              {isHomePage && (
+                <li>
+                  <ScrollLink to="contact" smooth={true} duration={500} className={activeSection === "/contact" ? "text-primary" : ""}>
+                    Contact Us
+                  </ScrollLink>
+                </li>
+              )}
             </ul>
           </div>
-          <a className="text-xl btn btn-ghost">
+          <Link href="/" className="text-xl btn btn-ghost">
             <span>
               SEO<span className="text-primary">Bizzagi</span>
             </span>
-          </a>
+          </Link>
         </div>
         <div className="hidden lg:flex justify-center w-full">
           <ul className="flex space-x-8">
@@ -60,11 +62,13 @@ const Navbar: React.FC = () => {
                 History
               </Link>
             </li>
-            <li>
-              <ScrollLink to="contact" smooth={true} duration={500} className={`${activeSection === "#contact" ? "text-primary" : "text-black"} hover:text-primary transition duration-300 cursor-pointer`}>
-                Contact Us
-              </ScrollLink>
-            </li>
+            {isHomePage && (
+              <li>
+                <ScrollLink to="contact" smooth={true} duration={500} className={`${activeSection === "#contact" ? "text-primary" : "text-black"} hover:text-primary transition duration-300 cursor-pointer`}>
+                  Contact Us
+                </ScrollLink>
+              </li>
+            )}
           </ul>
         </div>
 

@@ -1,6 +1,8 @@
 // src/components/Homepage.tsx
 import Image from "next/image";
 import React from "react";
+import FeaturesSection from "./features";
+import BackToTopButton from "../BackToTopButton";
 
 const Homepage: React.FC = () => {
   return (
@@ -18,124 +20,14 @@ const Homepage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20">
-        <h2 className="mb-10 text-4xl font-bold text-center text-black">
-          We provide the Perfect Solution to your business growth
-        </h2>
-        <div className="flex space-x-6 overflow-x-auto px-4 w-full scrollbar-hide">
-          {/* General Information */}
-          <div className="card bg-yellow-100 p-6 min-w-[350px] max-w-[400px] flex-shrink-0">
-            <figure className="mt-12 mb-8">
-              <Image
-                src="/images/Activity.png"
-                alt="General Information"
-                width={100}
-                height={100}
-                className="rounded-xl"
-              />
-            </figure>
-            <div className="card-body">
-              <h3 className="text-lg font-bold text-black">General Information</h3>
-              <p className="text-black">
-                We provide key insights about your website's overall SEO health.
-              </p>
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="card bg-yellow-100 p-6 min-w-[350px] max-w-[400px] flex-shrink-0">
-            <figure className="mt-12 mb-8">
-              <Image
-                src="/images/Heart.png"
-                alt="Performance Metrics"
-                width={100}
-                height={100}
-                className="rounded-xl"
-              />
-            </figure>
-            <div className="card-body">
-              <h3 className="text-lg font-bold text-black">Performance Metrics</h3>
-              <p className="text-black">
-                We help identify the best ways to improve your business.
-              </p>
-            </div>
-          </div>
-
-          {/* Content Analysis */}
-          <div className="card bg-yellow-100 p-6 min-w-[350px] max-w-[400px] flex-shrink-0">
-            <figure className="mt-12 mb-8">
-              <Image
-                src="/images/Work.png"
-                alt="Content Analysis"
-                width={100}
-                height={100}
-                className="rounded-xl"
-              />
-            </figure>
-            <div className="card-body">
-              <h3 className="text-lg font-bold text-black">Content Analysis</h3>
-              <p className="text-black">
-                We provide insights into your content's relevance and quality.
-              </p>
-            </div>
-          </div>
-
-          {/* Metadata */}
-          <div className="card bg-yellow-100 p-6 min-w-[350px] max-w-[400px] flex-shrink-0">
-            <figure className="mt-12 mb-8">
-              <Image
-                src="/images/Activity.png"
-                alt="Metadata"
-                width={100}
-                height={100}
-                className="rounded-xl"
-              />
-            </figure>
-            <div className="card-body">
-              <h3 className="text-lg font-bold text-black">Metadata</h3>
-              <p className="text-black">
-                We analyze metadata to ensure it's optimized for search engines.
-              </p>
-            </div>
-          </div>
-
-          {/* Notes & Recommendations */}
-          <div className="card bg-yellow-100 p-6 min-w-[350px] max-w-[400px] flex-shrink-0">
-            <figure className="mt-12 mb-8">
-              <Image
-                src="/images/Activity.png"
-                alt="Notes & Recommendations"
-                width={100}
-                height={100}
-                className="rounded-xl"
-              />
-            </figure>
-            <div className="card-body">
-              <h3 className="text-lg font-bold text-black">Notes & Recommendations</h3>
-              <p className="text-black">
-                We provide detailed notes and actionable recommendations for improving your SEO.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+      <FeaturesSection />
 
       {/* Impact Metrics Section */}
       <section className="py-20">
         <div className="w-full max-w-7xl mx-auto flex gap-10">
           {/* Bagian Heading */}
           <div className="w-1/2 flex flex-col justify-start">
-            <h2 className="text-left text-8xl font-bold text-black mb-10">Our Impact in Numbers</h2>
+            <h2 className="text-left text-8xl font-bold text-black mb-20">Our Impact in Numbers</h2>
             
             {/* Customer Satisfaction & Completed Projects */}
             <div className="flex gap-8">
@@ -157,7 +49,7 @@ const Homepage: React.FC = () => {
 
           {/* Bagian Gambar Placeholder */}
           <div className="w-1/2">
-            <Image src="/images/Image.png" alt="Impact Placeholder" width={600} height={400} className="object-contain w-full h-auto" />
+            <Image src="/images/S.png" alt="Impact Placeholder" width={500} height={500} className="object-contain w-full h-auto rounded-lg shadow-lg" />
           </div>
         </div>
       </section>
@@ -181,7 +73,7 @@ const Homepage: React.FC = () => {
             { name: 'Liem, Ivan Budiono',
               role: 'Student',
               tech: 'Cloud Computing',
-              image: '/images/Image.png',
+              image: '/images/IB.png',
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/ivanbudiono/'},
@@ -274,8 +166,11 @@ const Homepage: React.FC = () => {
 
       {/* Footer */}
       <footer className="py-10 bg-primary">
-        <p className="text-center text-black font-semibold">&copy; 2024 SEOBizzagi. All Rights Reserved.</p>
+        <p className="text-center text-black font-semibold">&copy; 2024 SEOBizzagi</p>
       </footer>
+
+      {/* Back to Top Button */}
+      <BackToTopButton />
     </div>
   );
 };
