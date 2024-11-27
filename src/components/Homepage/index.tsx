@@ -1,10 +1,22 @@
 // src/components/Homepage.tsx
 import Image from "next/image";
 import React from "react";
+import { useRouter } from "next/router";
 import FeaturesSection from "./features";
 import BackToTopButton from "../BackToTopButton";
 
 const Homepage: React.FC = () => {
+  const router = useRouter();
+  const isLoggedIn = false;
+
+  const handleStartNowClick = () => {
+    if (!isLoggedIn) {
+      router.push("/auth/login");
+    } else {
+      console.log("User is logged in. Proceed with the action.");
+    }
+  };
+
   return (
     <div>
       {/* Main Page Section */}
@@ -15,7 +27,7 @@ const Homepage: React.FC = () => {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-3xl">
           <input type="text" placeholder="Enter the link, domain, or URL here" className="p-4 border border-gray-300 rounded-md w-full sm:w-3/4 mb-4 sm:mb-0 sm:mr-4" />
-          <button className="w-full sm:w-auto px-8 py-4 bg-yellow-500 text-black font-semibold rounded-md hover:bg-yellow-600 transition duration-300">Start Now</button>
+          <button className="w-full sm:w-auto px-8 py-4 bg-yellow-500 text-black font-semibold rounded-md hover:bg-yellow-600 transition duration-300" onClick={handleStartNowClick}>Start Now</button>
         </div>
       </section>
 
@@ -63,7 +75,7 @@ const Homepage: React.FC = () => {
             { name: 'Denny Irawan',
               role: 'Student',
               tech: 'Cloud Computing', 
-              image: '/images/Image.png', 
+              image: '/images/DI.png', 
               social: [
                 { platform: 'whatsapp', link: '' },
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/denny-irawan22/' },
@@ -105,9 +117,9 @@ const Homepage: React.FC = () => {
               <Image
                 src={member.image}
                 alt={`${member.name} photo`}
-                width={500}
-                height={500}
-                className="rounded-md mb-8"
+                width={300}
+                height={300}
+                className="rounded-md mb-4 object-cover w-full h-[300px]"
               />
               <h3 className="text-2xl font-bold text-black mb-2">{member.name}</h3>
               <p className="font-semibold text-black mb-1">{member.role}</p>
