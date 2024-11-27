@@ -1,15 +1,48 @@
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 const LoginViews = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  const { push } = useRouter();
+  const { push, query } = useRouter();
+  const callbackUrl: any = query.callbackUrl || "/";
   const handlerLogin = () => {
     push("/");
+  };
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    setError("");
+    setIsLoading(true);
+    // const data = {
+    //   name: event.target.name.value,
+    //   email: event.target.email.value,
+    //   password: event.target.password.value,
+    // };
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: event.target.email.value,
+        password: event.target.password.value,
+        callbackUrl: "/",
+      });
+      if (!res?.error) {
+        setIsLoading(false);
+        push(callbackUrl);
+      } else {
+        setIsLoading(false);
+        setError(res.error);
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      setError(error);
+    }
   };
 
   return (
@@ -18,7 +51,14 @@ const LoginViews = () => {
         <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold text-center text-primary">SEO Audit Login</h1>
           <p className="mb-8 text-center text-gray-600">Welcome back! Please login to your account.</p>
-
+          {error && (
+            <div role="alert" className="mb-4 alert alert-error">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
           <form>
             {/* Email Field */}
             <div className="mb-4">

@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Link as ScrollLink } from "react-scroll";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
+  const { data } = useSession();
+  console.log(data);
   const router = useRouter();
   const [activeSection, setActiveSection] = useState(router.pathname);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
 
   useEffect(() => {
@@ -70,16 +73,19 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
         </div>
 
         <div className="navbar-end">
-          {isLoggedIn ? (
+          {data ? (
             <div className="flex items-center">
-              <i className="ri-user-3-line"></i>
-              <span>{username}</span>
+              <span>{data.user.name}</span>
+              <i className="mr-4 text-2xl ri-user-3-line"></i>
+              <button className="mr-4 btn btn-outline outline-transparent" onClick={() => signOut()}>
+                Logout
+              </button>
             </div>
           ) : (
             <>
-              <a className="mr-4 btn btn-outline outline-transparent" href="/login">
+              <button className="mr-4 btn btn-outline outline-transparent" onClick={() => signIn()}>
                 Login
-              </a>
+              </button>
               <a className="text-white btn bg-primary" href="/register">
                 Register
               </a>
