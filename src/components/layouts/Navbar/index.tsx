@@ -76,6 +76,13 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
           {data ? (
             <div className="flex items-center">
               <span>{data.user.name}</span>
+              {data?.user?.image && (
+                <div class="avatar">
+                  <div class="w-10 rounded-full">
+                    <img src={data.user.image} alt={data.user.name} />
+                  </div>
+                </div>
+              )}
               <i className="mr-4 text-2xl ri-user-3-line"></i>
               <button className="mr-4 btn btn-outline outline-transparent" onClick={() => signOut()}>
                 Logout

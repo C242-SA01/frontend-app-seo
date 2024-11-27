@@ -18,4 +18,4 @@ export function mainMiddleware(request: NextRequest) {
 //   matcher: ["/history"],
 // };
 
-export default withAuth(mainMiddleware, ["/history", "/profile"]);
+export default withAuth(mainMiddleware, ["/history", "/profile", "/admin"]);

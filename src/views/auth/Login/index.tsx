@@ -20,11 +20,11 @@ const LoginViews = () => {
     event.preventDefault();
     setError("");
     setIsLoading(true);
-    // const data = {
-    //   name: event.target.name.value,
-    //   email: event.target.email.value,
-    //   password: event.target.password.value,
-    // };
+    const data = {
+      name: event.target.name.value,
+      email: event.target.email.value,
+      password: event.target.password.value,
+    };
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -37,11 +37,11 @@ const LoginViews = () => {
         push(callbackUrl);
       } else {
         setIsLoading(false);
-        setError(res.error);
+        setError("Email or password is incorrect");
       }
     } catch (error: any) {
       setIsLoading(false);
-      setError(error);
+      setError("Email or password is incorrect");
     }
   };
 
@@ -59,7 +59,7 @@ const LoginViews = () => {
               <span>{error}</span>
             </div>
           )}
-          <form>
+          <form onSubmit={handleSubmit}>
             {/* Email Field */}
             <div className="mb-4">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -82,7 +82,7 @@ const LoginViews = () => {
 
             {/* Login Button */}
             <div className="mb-6">
-              <button onClick={() => handlerLogin()} type="submit" className="w-full text-white border-none btn bg-primary">
+              <button type="submit" className="w-full text-white border-none btn bg-primary :hover:bg-primary-focus">
                 Login
               </button>
             </div>
@@ -90,6 +90,20 @@ const LoginViews = () => {
 
           {/* Additional Links */}
           <div className="text-center">
+            <p>Or</p>
+            {/* Tombol Sign In dengan Google */}
+            <div className="mt-4 mb-2">
+              <button
+                onClick={() => signIn("google", { callbackUrl, redirect: false })}
+                className="flex items-center justify-center w-full px-4 py-2 text-white transition-all duration-200 bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-3">
+                  <path d="M21.8 10.23H12v3.55h5.6c-.42 2.22-2.42 3.84-5.6 3.84-3.3 0-5.99-2.66-5.99-5.94s2.69-5.94 5.99-5.94c1.44 0 2.75.52 3.78 1.37l2.64-2.5C16.88 2.45 14.56 1.5 12 1.5 6.6 1.5 2.25 5.7 2.25 11S6.6 20.5 12 20.5c5.68 0 9.75-3.86 9.75-9.41 0-.66-.1-1.31-.25-1.86z" />
+                </svg>
+                Sign in with Google
+              </button>
+            </div>
+
             <p className="text-sm text-gray-600">
               Don’t have an account?{" "}
               <Link className="font-semibold text-primary" href={"/auth/register"}>
