@@ -38,7 +38,8 @@ type Data = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
     if (req.query.history![1]) {
-      const data = await retrieveDataById("auditResults", req.query.history![1]);
+      // const data = await retrieveDataById("auditResults", req.query.history![1]);
+      const data = await retrieveDataById("users", req.query.history![1]);
       res.status(200).json({ data, statusCode: 200, status: true });
     } else {
       const data = await retrieveData("auditResults");

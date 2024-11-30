@@ -54,12 +54,12 @@ const authOptions: NextAuthOptions = {
       }
       if (account?.provider === "google") {
         const data = {
-          name: user.name,
+          fullname: user.name,
           email: user.email,
           image: user.image,
           type: "google",
         };
-        (token.email = data.email), (token.name = data.name.fullname), (token.image = data.image), (token.type = data.type), (token.role = "user");
+        (token.email = data.email), (token.name = data.fullname), (token.image = data.image), (token.type = data.type), (token.role = "user");
       }
       return token;
     },
