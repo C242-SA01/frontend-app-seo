@@ -77,8 +77,8 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
             <div className="flex items-center">
               <span>{data.user.name}</span>
               {data?.user?.image && (
-                <div class="avatar">
-                  <div class="w-10 rounded-full">
+                <div className="avatar">
+                  <div className="w-10 rounded-full">
                     <img src={data.user.image} alt={data.user.name} />
                   </div>
                 </div>

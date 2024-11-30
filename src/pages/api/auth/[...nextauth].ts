@@ -61,6 +61,7 @@ const authOptions: NextAuthOptions = {
         };
         (token.email = data.email), (token.name = data.fullname), (token.image = data.image), (token.type = data.type), (token.role = "user");
       }
+      console.log("ini adalah isi token", token);
       return token;
     },
     async session({ session, token }: any) {
