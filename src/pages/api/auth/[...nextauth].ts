@@ -1,4 +1,4 @@
-import { signIn } from "@/lib/firebase/service";
+import { signIn } from "@/lib/firestore/service";
 import { compare } from "bcrypt";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -61,7 +61,6 @@ const authOptions: NextAuthOptions = {
         };
         (token.email = data.email), (token.name = data.fullname), (token.image = data.image), (token.type = data.type), (token.role = "user");
       }
-      console.log("ini adalah isi token", token);
       return token;
     },
     async session({ session, token }: any) {

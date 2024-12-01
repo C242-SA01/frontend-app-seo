@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import app from "@/lib/firebase/init";
-import { retrieveData, retrieveDataById } from "@/lib/firebase/service";
+import app from "@/lib/firestore/init";
+import { retrieveData, retrieveDataById } from "@/lib/firestore/service";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 

@@ -11,7 +11,8 @@
 # next.js
 /.next/
 /out/
-
+/serviceAccount.json
+serviceAccount.json
 # production
 /build
 
