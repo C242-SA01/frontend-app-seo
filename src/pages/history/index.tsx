@@ -1,11 +1,8 @@
 import AuditHistory from "@/views/Seo";
-import { Inter } from "next/font/google";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Timestamp } from "firebase/firestore"; // Import Timestamp
-
-const inter = Inter({ subsets: ["latin"] });
+import { useSession } from "next-auth/react";
+import "remixicon/fonts/remixicon.css";
 
 type HistoryType = {
   id: string;
@@ -15,43 +12,73 @@ type HistoryType = {
 };
 
 const HistoryPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [histories, setHistories] = useState<HistoryType[]>([]);
-  const { push } = useRouter();
-
-  // useEffect(() => {
-  //   if (!isLogin) {
-  //     push("auth/login");
-  //   }
-  // }, [isLogin]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { data }: any = useSession();
 
   useEffect(() => {
-    fetch("/api/history")
+    const email = data?.user?.email;
+
+    if (!email) {
+      setIsLoading(false);
+      return;
+    }
+
+    fetch(`/api/history?email=${email}`)
       .then((res) => res.json())
       .then((response) => {
-        const mappedHistories = response.data.map((audit: any) => {
-          console.log(audit);
-          let createdAt = new Date();
-          const miliseconds = audit.createdAt.seconds * 1000 + audit.createdAt.nanoseconds / 1000000;
-          createdAt = new Date(miliseconds);
-          return {
-            id: audit.id,
-            clientName: audit.generalInfo.clientName,
-            websiteURL: audit.generalInfo.websiteURL,
-            createdAt: createdAt.toLocaleDateString(),
-          };
-        });
+        setIsLoading(false);
+        if (response.status) {
+          const mappedHistories = response.data.map((audit: any) => {
+            const createdAt = audit.createdAt ? new Date(audit.createdAt.seconds * 1000) : new Date();
 
-        setHistories(mappedHistories);
+            return {
+              id: audit.id,
+              clientName: audit.generalInformation.clientName,
+              websiteURL: audit.generalInformation.websiteURL,
+              generalInformation: audit.generalInformation,
+              createdAt: createdAt.toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric",
+                hour12: true,
+              }),
+            };
+          });
+
+          setHistories(mappedHistories);
+        } else {
+          console.error(response.message);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.error(err);
       });
-  }, []);
+  }, [data]);
 
   return (
     <div className="text-center">
       <Head>
         <title>History</title>
       </Head>
-      <AuditHistory data={histories} />
+
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      ) : histories.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-96">
+          <i className="ri-folder-open-line text-6xl text-blue-400"></i>
+          <p className="mt-4 text-xl font-bold text-gray-600">No History Found</p>
+          <p className="mt-2 text-gray-500">It seems like you haven’t created any history yet. Start your first audit and return here to view it.</p>
+        </div>
+      ) : (
+        <AuditHistory data={histories} />
+      )}
     </div>
   );
 };

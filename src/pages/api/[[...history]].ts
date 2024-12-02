@@ -1,68 +1,68 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import app from "@/lib/firestore/init";
-import { retrieveData, retrieveDataById } from "@/lib/firestore/service";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
-
-type AuditResult = {
-  id: string;
-  generalInfo: {
-    clientName: string;
-    websiteURL: string;
-    structure: number;
-  };
-  scoreInfo: {
-    score: string;
-    description: string;
-  };
-  metrics: {
-    [key: string]: string; // Nama metrik sebagai key, nilai sebagai string.
-  };
-  metadataData: {
-    [key: string]: string | number; // Nama metadata sebagai key, nilai string/angka.
-  };
-  contentAnalysisData: {
-    [key: string]: string | number; // Nama analisis konten sebagai key, nilai string/angka.
-  };
-  createdAt: string;
-  updatedAt: string;
-};
+import { getAuditHistoryByEmail, getAuditHistoryById } from "@/lib/firestore/service";
 
 type Data = {
   statusCode: number;
   message?: string;
   status: boolean;
-  data: AuditResult[];
+  data: any | null;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
-    if (req.query.history![1]) {
-      // const data = await retrieveDataById("auditResults", req.query.history![1]);
-      const data = await retrieveDataById("users", req.query.history![1]);
-      res.status(200).json({ data, statusCode: 200, status: true });
-    } else {
-      const data = await retrieveData("auditResults");
-      res.status(200).json({ data, statusCode: 200, status: true });
+    const { email, id } = req.query;
+
+    // Prioritas pertama: Ambil data berdasarkan ID jika tersedia
+    if (id && typeof id === "string") {
+      const historyData = await getAuditHistoryById(id);
+      if (!historyData) {
+        return res.status(404).json({
+          statusCode: 404,
+          status: false,
+          message: "Data not found",
+          data: null,
+        });
+      }
+      return res.status(200).json({
+        statusCode: 200,
+        status: true,
+        data: historyData,
+      });
     }
-    // Retrieve data from Firestore's "auditResults" collection
-    const data = await retrieveData("auditResults");
 
-    // Transform the Firestore data into the desired structure
-    const auditResults: AuditResult[] = Object.entries(data).map(([id, doc]: [string, any]) => ({
-      id,
-      generalInfo: doc.generalInfo,
-      scoreInfo: doc.scoreInfo,
-      metrics: doc.metrics,
-      metadataData: doc.metadataData,
-      contentAnalysisData: doc.contentAnalysisData,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    }));
+    // Jika ID tidak tersedia, ambil data berdasarkan email
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({
+        statusCode: 400,
+        status: false,
+        message: "Email or ID is required",
+        data: null,
+      });
+    }
 
-    res.status(200).json({ data: auditResults, statusCode: 200, status: true });
+    const historyData = await getAuditHistoryByEmail(email);
+
+    if (!historyData || historyData.length === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        status: false,
+        message: "Data not found",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      data: historyData,
+    });
   } catch (error) {
-    console.error("Error retrieving audit results:", error);
-    res.status(500).json({ data: [], statusCode: 500, status: false, message: "Server error" });
+    console.error("Error in API handler:", error);
+    res.status(500).json({
+      statusCode: 500,
+      status: false,
+      message: "Server error",
+      data: null,
+    });
   }
 }

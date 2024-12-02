@@ -93,3 +93,53 @@ export async function signInWithGoogle(userData: any, callback: Function) {
     callback({ status: false, message: error.message });
   }
 }
+
+export async function getAuditHistoryByEmail(email: string) {
+  try {
+    console.log("Fetching user with email:", email); // Log email yang diterima
+    const usersRef = getCollectionRef("users");
+    const snapshot = await usersRef.where("email", "==", email).get();
+    console.log("ini adalah snap", snapshot);
+    if (!snapshot.empty) {
+      const userDoc = snapshot.docs[0];
+      console.log("User found:", userDoc.data()); // Log user yang ditemukan
+      const historyRef = userDoc.ref.collection("history");
+      const historySnapshot = await historyRef.get();
+
+      if (historySnapshot.empty) {
+        console.log("No history found for user:", email);
+      }
+
+      return historySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.error("Error retrieving audit history:", error.message, error.stack); // Log lengkap error
+    throw new Error("Failed to retrieve audit history: " + error.message);
+  }
+}
+export const getAuditHistoryById = async (id: string) => {
+  try {
+    // Menggunakan collectionGroup untuk mencari sub-koleksi history di semua dokumen users
+    const snapshot = await firestore.collectionGroup("history").where(firestore.FieldPath.documentId(), "==", id).get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    // Hanya mengambil dokumen pertama karena ID harus unik dalam collectionGroup
+    const doc = snapshot.docs[0];
+
+    return {
+      id: doc.id,
+      ...doc.data(),
+    };
+  } catch (error) {
+    console.error("Error fetching history by ID:", error);
+    throw error;
+  }
+};
