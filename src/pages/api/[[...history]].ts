@@ -10,19 +10,22 @@ type Data = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
-    const { email, id } = req.query;
+    const { id, email } = req.query;
+    console.log("fetching id ", id);
 
-    // Prioritas pertama: Ambil data berdasarkan ID jika tersedia
+    // Prioritaskan pencarian berdasarkan ID jika ID tersedia
     if (id && typeof id === "string") {
       const historyData = await getAuditHistoryById(id);
+
       if (!historyData) {
         return res.status(404).json({
           statusCode: 404,
           status: false,
-          message: "Data not found",
+          message: "History not found",
           data: null,
         });
       }
+
       return res.status(200).json({
         statusCode: 200,
         status: true,
@@ -30,31 +33,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
     }
 
-    // Jika ID tidak tersedia, ambil data berdasarkan email
+    // Ambil daftar history berdasarkan email
     if (!email || typeof email !== "string") {
       return res.status(400).json({
         statusCode: 400,
         status: false,
-        message: "Email or ID is required",
+        message: "Email is required if ID is not provided",
         data: null,
       });
     }
 
-    const historyData = await getAuditHistoryByEmail(email);
+    console.log("Fetching history by email:", email);
+    const historyList = await getAuditHistoryByEmail(email);
 
-    if (!historyData || historyData.length === 0) {
+    if (!historyList || historyList.length === 0) {
       return res.status(404).json({
         statusCode: 404,
         status: false,
-        message: "Data not found",
+        message: "No history found for the given email",
         data: null,
       });
     }
 
-    res.status(200).json({
+    console.log("History data:", historyList); // Tambahkan log data hasil query
+
+    return res.status(200).json({
       statusCode: 200,
       status: true,
-      data: historyData,
+      data: historyList,
     });
   } catch (error) {
     console.error("Error in API handler:", error);

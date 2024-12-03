@@ -10,9 +10,9 @@ import MetadataTable from "@/components/MetadataTable";
 
 const DetailHistoryPage = () => {
   const { query } = useRouter();
-  // const { data, error, isLoading } = useSWR(query.id ? `/api/history/${query.id}` : null, fetcher);
-  const { data, error, isLoading } = useSWR(query.id ? `/api/history?id=${query.id}` : null, fetcher);
-  console.log("Data dari API:", data);
+  const { data, error, isLoading } = useSWR(query.id ? `/api/history/${query.id}` : null, fetcher);
+  // const { data, error, isLoading } = useSWR(query.id ? `/api/history?id=${query.id}` : null, fetcher);
+  // console.log("Data dari API:", data);
 
   if (isLoading) {
     return (

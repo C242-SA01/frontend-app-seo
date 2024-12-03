@@ -96,13 +96,11 @@ export async function signInWithGoogle(userData: any, callback: Function) {
 
 export async function getAuditHistoryByEmail(email: string) {
   try {
-    console.log("Fetching user with email:", email); // Log email yang diterima
     const usersRef = getCollectionRef("users");
     const snapshot = await usersRef.where("email", "==", email).get();
     console.log("ini adalah snap", snapshot);
     if (!snapshot.empty) {
       const userDoc = snapshot.docs[0];
-      console.log("User found:", userDoc.data()); // Log user yang ditemukan
       const historyRef = userDoc.ref.collection("history");
       const historySnapshot = await historyRef.get();
 
@@ -124,19 +122,22 @@ export async function getAuditHistoryByEmail(email: string) {
 }
 export const getAuditHistoryById = async (id: string) => {
   try {
-    // Menggunakan collectionGroup untuk mencari sub-koleksi history di semua dokumen users
+    console.log("Fetching history with ID:", id);
+
     const snapshot = await firestore.collectionGroup("history").where(firestore.FieldPath.documentId(), "==", id).get();
 
+    console.log("Snapshot size:", snapshot.size);
+
     if (snapshot.empty) {
+      console.error("No document found for the given ID:", id);
       return null;
     }
 
-    // Hanya mengambil dokumen pertama karena ID harus unik dalam collectionGroup
-    const doc = snapshot.docs[0];
+    console.log("Document data:", snapshot.docs[0].data());
 
     return {
-      id: doc.id,
-      ...doc.data(),
+      id: snapshot.docs[0].id,
+      ...snapshot.docs[0].data(),
     };
   } catch (error) {
     console.error("Error fetching history by ID:", error);
