@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getAuditHistoryByEmail, getAuditHistoryById } from "@/lib/firestore/service";
+import {
+  getAuditHistoryByEmail,
+  getAuditHistoryById,
+} from "@/lib/firestore/service";
 
 type Data = {
   statusCode: number;
@@ -8,7 +11,10 @@ type Data = {
   data: any | null;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
   try {
     const { id, email } = req.query;
     console.log("fetching id ", id);

@@ -4,10 +4,16 @@ interface GeneralInfoProps {
   structure: number;
 }
 
-const GeneralInfo: React.FC<GeneralInfoProps> = ({ clientName, websiteURL, structure }) => {
+const GeneralInfo: React.FC<GeneralInfoProps> = ({
+  clientName,
+  websiteURL,
+  structure,
+}) => {
   return (
     <div className="h-full p-4 mb-4 bg-white rounded-lg shadow">
-      <h2 className="py-2 mb-4 text-xl font-bold text-center text-black rounded-lg bg-primary">General Information</h2>
+      <h2 className="py-2 mb-4 text-xl font-bold text-center text-black rounded-lg bg-primary">
+        General Information
+      </h2>
       <table className="table w-full overflow-hidden border-collapse rounded-lg">
         <tbody>
           <tr className="bg-gray-50">

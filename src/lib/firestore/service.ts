@@ -1,4 +1,8 @@
-import { Firestore, CollectionReference, QueryDocumentSnapshot } from "@google-cloud/firestore";
+import {
+  Firestore,
+  CollectionReference,
+  QueryDocumentSnapshot,
+} from "@google-cloud/firestore";
 import bcrypt from "bcrypt";
 import firestore from "./init";
 
@@ -12,7 +16,7 @@ export async function retrieveData(collectionName: string) {
   try {
     const collectionRef = getCollectionRef(collectionName);
     const snapshot = await collectionRef.get();
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error("Error retrieving data:", error);
     throw new Error("Failed to retrieve data");
@@ -36,10 +40,14 @@ export async function retrieveDataById(collectionName: string, id: string) {
 }
 
 // Fungsi Sign In
-export async function signIn(userData: { email: string }): Promise<{ id: string; [key: string]: any } | null> {
+export async function signIn(userData: {
+  email: string;
+}): Promise<{ id: string; [key: string]: any } | null> {
   try {
     const collectionRef = getCollectionRef("users");
-    const snapshot = await collectionRef.where("email", "==", userData.email).get();
+    const snapshot = await collectionRef
+      .where("email", "==", userData.email)
+      .get();
 
     if (!snapshot.empty) {
       const user = snapshot.docs[0];
@@ -53,10 +61,15 @@ export async function signIn(userData: { email: string }): Promise<{ id: string;
 }
 
 // Fungsi Sign Up
-export async function signUp(userData: { name: string; email: string; password: string; role?: string }, callback: Function) {
+export async function signUp(
+  userData: { name: string; email: string; password: string; role?: string },
+  callback: Function
+) {
   try {
     const collectionRef = getCollectionRef("users");
-    const snapshot = await collectionRef.where("email", "==", userData.email).get();
+    const snapshot = await collectionRef
+      .where("email", "==", userData.email)
+      .get();
 
     if (!snapshot.empty) {
       callback({ status: false, message: "Email already exists" });
@@ -76,17 +89,27 @@ export async function signUp(userData: { name: string; email: string; password: 
 export async function signInWithGoogle(userData: any, callback: Function) {
   try {
     const collectionRef = getCollectionRef("users");
-    const snapshot = await collectionRef.where("email", "==", userData.email).get();
+    const snapshot = await collectionRef
+      .where("email", "==", userData.email)
+      .get();
 
     if (!snapshot.empty) {
       const existingUser = snapshot.docs[0];
       userData.role = existingUser.data().role;
       await existingUser.ref.update(userData);
-      callback({ status: true, message: "Signed in with Google successfully", data: userData });
+      callback({
+        status: true,
+        message: "Signed in with Google successfully",
+        data: userData,
+      });
     } else {
       userData.role = "member";
       await collectionRef.add(userData);
-      callback({ status: true, message: "Signed in with Google successfully", data: userData });
+      callback({
+        status: true,
+        message: "Signed in with Google successfully",
+        data: userData,
+      });
     }
   } catch (error: any) {
     console.error("Error during Google sign-in:", error);
@@ -98,7 +121,6 @@ export async function getAuditHistoryByEmail(email: string) {
   try {
     const usersRef = getCollectionRef("users");
     const snapshot = await usersRef.where("email", "==", email).get();
-    console.log("ini adalah snap", snapshot);
     if (!snapshot.empty) {
       const userDoc = snapshot.docs[0];
       const historyRef = userDoc.ref.collection("history");
@@ -108,39 +130,46 @@ export async function getAuditHistoryByEmail(email: string) {
         console.log("No history found for user:", email);
       }
 
-      return historySnapshot.docs.map((doc) => ({
+      return historySnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data(),
       }));
     } else {
       throw new Error("User not found");
     }
-  } catch (error) {
-    console.error("Error retrieving audit history:", error.message, error.stack); // Log lengkap error
+  } catch (error: any) {
+    console.error(
+      "Error retrieving audit history:",
+      error.message,
+      error.stack
+    ); // Log lengkap error
     throw new Error("Failed to retrieve audit history: " + error.message);
   }
 }
-export const getAuditHistoryById = async (id: string) => {
+export async function getAuditHistoryById(id: string) {
   try {
-    console.log("Fetching history with ID:", id);
+    const usersRef = getCollectionRef("users");
+    const snapshot = await usersRef.get();
 
-    const snapshot = await firestore.collectionGroup("history").where(firestore.FieldPath.documentId(), "==", id).get();
+    for (const userDoc of snapshot.docs) {
+      const historyRef = userDoc.ref.collection("history");
+      const historySnapshot = await historyRef.doc(id).get();
 
-    console.log("Snapshot size:", snapshot.size);
-
-    if (snapshot.empty) {
-      console.error("No document found for the given ID:", id);
-      return null;
+      if (historySnapshot.exists) {
+        return {
+          id: historySnapshot.id,
+          ...historySnapshot.data(),
+        };
+      }
     }
 
-    console.log("Document data:", snapshot.docs[0].data());
-
-    return {
-      id: snapshot.docs[0].id,
-      ...snapshot.docs[0].data(),
-    };
-  } catch (error) {
-    console.error("Error fetching history by ID:", error);
-    throw error;
+    throw new Error("History not found");
+  } catch (error: any) {
+    console.error(
+      "Error retrieving history by ID:",
+      error.message,
+      error.stack
+    );
+    throw new Error("Failed to retrieve history: " + error.message);
   }
-};
+}
