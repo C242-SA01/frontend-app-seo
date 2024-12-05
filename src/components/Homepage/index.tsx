@@ -1,34 +1,52 @@
 // src/components/Homepage.tsx
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from 'next/router';
+import { useSession } from "next-auth/react";
 import FeaturesSection from "./features";
 import BackToTopButton from "../BackToTopButton";
+import PricingCards from "./PricingCards";
 
 const Homepage: React.FC = () => {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { data: session, status } = useSession();
   const [inputURL, setInputURL] = useState("");
-
-  useEffect(() => {
-    // Check if the user is authenticated (e.g., using local storage)
-    const userToken = localStorage.getItem('userToken');
-    setIsAuthenticated(!!userToken);
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleStartNow = async () => {
-    // Hapus pengecekan userToken untuk sementara
+    if (status !== "authenticated") {
+      router.push("/auth/login");
+      return;
+    }
+
+    console.log("Start Now button clicked");
     if (inputURL) {
+      setIsLoading(true);
       try {
-        const response = await fetch('http://127.0.0.1:5000/audit', {
+        // Kirimkan request ke API audit
+        const response = await fetch('/api/audit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include', // Agar cookie autentikasi dikirim
           body: JSON.stringify({ url: inputURL }),
         });
+
         if (response.ok) {
           const auditResult = await response.json();
+
+          // Simpan hasil audit ke subkoleksi history berdasarkan email pengguna
+          const userEmail = session?.user?.email; // Ambil email dari sesi pengguna
+
+          await fetch('/api/history', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userEmail, auditResult }),
+          });
+
           router.push({
             pathname: '/results',
             query: { auditResult: JSON.stringify(auditResult) },
@@ -37,7 +55,9 @@ const Homepage: React.FC = () => {
           console.error('Failed to audit URL');
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error occurred during fetch:', error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       console.error('No URL provided');
@@ -62,14 +82,25 @@ const Homepage: React.FC = () => {
           />
           <button
             onClick={handleStartNow}
-            className="w-full sm:w-auto px-8 py-4 bg-yellow-500 text-black font-semibold rounded-md hover:bg-yellow-600 transition duration-300">
-            Start Now
+            disabled={isLoading}
+            className={`w-full sm:w-auto px-8 py-4 font-semibold rounded-md transition duration-300 ${
+              isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600 text-black'
+            }`}>
+            {isLoading ? 'Loading...' : 'Start Now'}
           </button>
         </div>
+        {isLoading && (
+          <div className="mt-4">
+            <p className="text-black">Loading... Please wait</p>
+          </div>
+        )}
       </section>
 
       {/* Features Section */}
       <FeaturesSection />
+
+      {/* Pricing Section */}
+      <PricingCards />
 
       {/* Impact Metrics Section */}
       <section className="py-20">
@@ -98,7 +129,7 @@ const Homepage: React.FC = () => {
 
           {/* Bagian Gambar Placeholder */}
           <div className="w-1/2">
-            <Image src="/images/S.png" alt="Impact Placeholder" width={500} height={500} className="object-contain w-full h-auto rounded-lg shadow-lg" />
+            <Image src="/images/G.png" alt="Impact Placeholder" width={500} height={500} className="object-contain w-full h-auto rounded-lg shadow-lg" />
           </div>
         </div>
       </section>
@@ -112,7 +143,7 @@ const Homepage: React.FC = () => {
             { name: 'Denny Irawan',
               role: 'Student',
               tech: 'Cloud Computing', 
-              image: '/images/Image.png', 
+              image: '/images/O.png', 
               social: [
                 { platform: 'whatsapp', link: '' },
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/denny-irawan22/' },
@@ -122,7 +153,7 @@ const Homepage: React.FC = () => {
             { name: 'Liem, Ivan Budiono',
               role: 'Student',
               tech: 'Cloud Computing',
-              image: '/images/IB.png',
+              image: '/images/N.png',
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/ivanbudiono/'},
@@ -132,7 +163,7 @@ const Homepage: React.FC = () => {
             { name: 'Lintang Iqhtiar Dwi Mawarni',
               role: 'Student',
               tech: 'Machine Learning',
-              image: '/images/Image.png',
+              image: '/images/S.png',
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/lintang-iqhtiar-13b7t1995/'},
@@ -142,7 +173,7 @@ const Homepage: React.FC = () => {
             { name: 'Egbert Tjandra',
               role: 'Student',
               tech: 'Machine Learning', 
-              image: '/images/Image.png', 
+              image: '/images/P.png', 
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/egbert-tjandra-ba192432a/'},
@@ -156,7 +187,7 @@ const Homepage: React.FC = () => {
                 alt={`${member.name} photo`}
                 width={500}
                 height={500}
-                className="rounded-md mb-8"
+                className="rounded-md mb-4 object-cover"
               />
               <h3 className="text-2xl font-bold text-black mb-2">{member.name}</h3>
               <p className="font-semibold text-black mb-1">{member.role}</p>

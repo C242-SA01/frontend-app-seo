@@ -34,8 +34,13 @@ const ResultPage: React.FC = () => {
   const notesAnalysis = auditResult['Notes Analysis'];
 
   if (!auditData) {
-    return <p>Data tidak ditemukan</p>;
+    return <p>Data not Available</p>;
   }
+
+  // Fungsi untuk menangani nilai null atau undefined
+  const formatValue = (value: any) => {
+    return value !== null && value !== undefined ? value : "Data tidak tersedia";
+  };
 
   const getDescription = (grade: string) => {
     switch (grade) {
@@ -61,63 +66,63 @@ const ResultPage: React.FC = () => {
         <div className="col-span-2">
           <GeneralInfo
             clientName={clientName}
-            URL={auditData.URL}
+            URL={formatValue(auditData.URL)}
             auditDate={auditDate}
           />
         </div>
         <AuditScore
-          Grade={auditData.Grade}
+          Grade={formatValue(auditData.Grade)}
           description={getDescription(auditData.Grade)}
         />
       </div>
 
       <PerformanceMetrics
         metrics={[
-          { name: "GTMetrix Performance", value: auditData.Performance },
-          { name: "GTMetrix Structure", value: auditData.Structure },
-          { name: "PageSpeed Performance", value: auditData.Performance },
-          { name: "PageSpeed Accessibility", value: auditData.Accessibility },
-          { name: "PageSpeed Best Practices", value: auditData["Best Practices"] },
-          { name: "PageSpeed SEO", value: auditData.SEO },
+          { name: "GTMetrix Performance", value: formatValue(auditData.Performance) },
+          { name: "GTMetrix Structure", value: formatValue(auditData.Structure) },
+          { name: "PageSpeed Performance", value: formatValue(auditData.Performance) },
+          { name: "PageSpeed Accessibility", value: formatValue(auditData.Accessibility) },
+          { name: "PageSpeed Best Practices", value: formatValue(auditData["Best Practices"]) },
+          { name: "PageSpeed SEO", value: formatValue(auditData.SEO) },
         ]}
       />
       <div className="m-8">
         <ContentAnalysis
           contentData={[
-            { label: "Broken Links Count", value: auditData["Broken Link Count"] },
-            { label: "Duplicate Content Percentage", value: auditData["Duplicate Count Percentage"] },
-            { label: "Common Content Percentage", value: auditData["Common Count Percentage"] },
-            { label: "Unique Content Percentage", value: auditData["Unique Count Percentage"] },
-            { label: "Mobile Friendly", value: auditData["Mobile Friendly"] },
+            { label: "Broken Links Count", value: formatValue(auditData["Broken Link Count"]) },
+            { label: "Duplicate Content Percentage", value: formatValue(auditData["Duplicate Count Percentage"]) },
+            { label: "Common Content Percentage", value: formatValue(auditData["Common Count Percentage"]) },
+            { label: "Unique Content Percentage", value: formatValue(auditData["Unique Count Percentage"]) },
+            { label: "Mobile Friendly", value: formatValue(auditData["Mobile Friendly"]) },
           ]}
         />
       </div>
       <div className="m-8">
         <MetadataTable
           metadata={[
-            { label: "Meta Title", value: auditData["Meta title"] },
-            { label: "Meta Title Count", value: auditData["Meta title count"] },
-            { label: "Meta Description", value: auditData["Meta description"] },
-            { label: "Meta Description Count", value: auditData["Meta description count"] },
-            { label: "H1 Count", value: auditData["H1 count"] },
-            { label: "H2 Count", value: auditData["H2 count"] },
-            { label: "H3 Count", value: auditData["H3 count"] },
-            { label: "Meta Robots", value: auditData["Meta robots"] },
-            { label: "Meta Keywords", value: auditData["Meta keywords"] },
-            { label: "Open Graph Status", value: auditData["Open Graph Status"] },
-            { label: "Canonical Tag Present", value: auditData["Canonical Tag Present"] },
-            { label: "Sitemap Present", value: auditData["Sitemap Present"] },
-            { label: "Robots.txt Present", value: auditData["Robots.txt Present"] },
-            { label: "Google Search Console Connected", value: auditData["Google Search Console Connected"] },
-            { label: "Favicon Present", value: auditData["Favicon Present"] },
+            { label: "Meta Title", value: formatValue(auditData["Meta title"]) },
+            { label: "Meta Title Count", value: formatValue(auditData["Meta title count"]) },
+            { label: "Meta Description", value: formatValue(auditData["Meta description"]) },
+            { label: "Meta Description Count", value: formatValue(auditData["Meta description count"]) },
+            { label: "H1 Count", value: formatValue(auditData["H1 count"]) },
+            { label: "H2 Count", value: formatValue(auditData["H2 count"]) },
+            { label: "H3 Count", value: formatValue(auditData["H3 count"]) },
+            { label: "Meta Robots", value: formatValue(auditData["Meta robots"]) },
+            { label: "Meta Keywords", value: formatValue(auditData["Meta keywords"]) },
+            { label: "Open Graph Status", value: formatValue(auditData["Open Graph Status"]) },
+            { label: "Canonical Tag Present", value: formatValue(auditData["Canonical Tag Present"]) },
+            { label: "Sitemap Present", value: formatValue(auditData["Sitemap Present"]) },
+            { label: "Robots.txt Present", value: formatValue(auditData["Robots.txt Present"]) },
+            { label: "Google Search Console Connected", value: formatValue(auditData["Google Search Console Connected"]) },
+            { label: "Favicon Present", value: formatValue(auditData["Favicon Present"]) },
           ]}
         />
       </div>
       <div className="m-8">
-        <AdditionalNotes notes={notesAnalysis} />
+        <AdditionalNotes notes={formatValue(notesAnalysis)} />
       </div>
       <div className="m-8">
-        <Recommendation recommendations={actionableRecommendations} />
+        <Recommendation recommendations={formatValue(actionableRecommendations)} />
       </div>
     </>
   );

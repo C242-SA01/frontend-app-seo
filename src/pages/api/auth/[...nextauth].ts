@@ -27,7 +27,6 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const { email, password } = credentials as { email: string; password: string };
-        // const user: any = { id: 1, email: email, password: password };
         const user: any = await signIn({ email });
         if (user) {
           const passwordConfirm = await compare(password, user.password);
@@ -46,33 +45,24 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, profile, user }: any) {
-      if (account?.provider === "credentials") {
+    async jwt({ token, account, user }: any) {
+      console.log("JWT Callback - Token before modification:", token); // Log token sebelum dimodifikasi
+      if (account?.provider === "credentials" || account?.provider === "google") {
         token.email = user.email;
         token.name = user.name;
-        token.role = user.role;
+        token.role = user.role || "user";
+        token.sub = user.id; // Menambahkan id user ke token
       }
-      if (account?.provider === "google") {
-        const data = {
-          fullname: user.name,
-          email: user.email,
-          image: user.image,
-          type: "google",
-        };
-        (token.email = data.email), (token.name = data.fullname), (token.image = data.image), (token.type = data.type), (token.role = "user");
-      }
+      console.log("JWT Callback - Token after modification:", token); // Log token setelah dimodifikasi
       return token;
     },
     async session({ session, token }: any) {
-      if ("email" in token) {
-        session.user.email = token.email;
-      }
-      if ("name" in token) {
-        session.user.name = token.name;
-      }
-      if ("role" in token) {
-        session.user.role = token.role;
-      }
+      console.log("Session Callback - Token:", token); // Log token untuk melihat data dalam token
+      session.user.email = token.email;
+      session.user.name = token.name;
+      session.user.role = token.role;
+      session.user.id = token.sub; // Menyimpan id user di session
+      console.log("Session Callback - Session:", session); // Log session untuk melihat data dalam session
       return session;
     },
   },

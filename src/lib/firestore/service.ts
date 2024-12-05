@@ -117,6 +117,35 @@ export async function signInWithGoogle(userData: any, callback: Function) {
   }
 }
 
+export const addAuditHistoryByEmail = async (email: string, auditResult: any) => {
+  try {
+    // Dapatkan referensi ke koleksi pengguna
+    const usersRef = getCollectionRef("users");
+    const snapshot = await usersRef.where("email", "==", email).get();
+
+    if (!snapshot.empty) {
+      // Dapatkan dokumen pengguna berdasarkan email
+      const userDoc = snapshot.docs[0];
+      // Referensi sub-koleksi "history" dalam dokumen pengguna
+      const historyRef = userDoc.ref.collection("history");
+
+      console.log("Saving audit history for user:", email); // Log untuk memastikan proses penyimpanan
+      const newDocRef = await historyRef.add({
+        ...auditResult,
+        createdAt: new Date(),
+      });
+
+      console.log("Audit history saved successfully with ID:", newDocRef.id); // Log ketika berhasil disimpan
+      return { id: newDocRef.id, ...auditResult };
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (error: any) {
+    console.error("Error adding audit history:", error.message, error.stack);
+    throw new Error("Failed to add audit history: " + error.message);
+  }
+};
+
 export async function getAuditHistoryByEmail(email: string) {
   try {
     const usersRef = getCollectionRef("users");
@@ -146,6 +175,7 @@ export async function getAuditHistoryByEmail(email: string) {
     throw new Error("Failed to retrieve audit history: " + error.message);
   }
 }
+
 export async function getAuditHistoryById(id: string) {
   try {
     const usersRef = getCollectionRef("users");

@@ -17,7 +17,9 @@ const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({ metrics = [] })
             metrics.map((metric, index) => (
               <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                 <td className="w-1/2 px-4 py-3 font-semibold border-r">{metric.name}</td>
-                <td className="w-1/2 px-4 py-3">{metric.value} %</td>
+                <td className="w-1/2 px-4 py-3">
+                  {typeof metric.value === "number" ? Math.round(metric.value) : metric.value} %
+                </td>
               </tr>
             ))
           ) : (

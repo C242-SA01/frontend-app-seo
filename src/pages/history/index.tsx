@@ -14,10 +14,11 @@ type HistoryType = {
 const HistoryPage = () => {
   const [histories, setHistories] = useState<HistoryType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { data }: any = useSession();
+  const { data: session }: any = useSession();
 
   useEffect(() => {
-    const email = data?.user?.email;
+    const email = session?.user?.email;
+    const clientName = session?.user?.name;
 
     if (!email) {
       setIsLoading(false);
@@ -30,22 +31,25 @@ const HistoryPage = () => {
         setIsLoading(false);
         if (response.status) {
           const mappedHistories = response.data.map((audit: any) => {
-            const createdAt = audit.createdAt ? new Date(audit.createdAt.seconds * 1000) : new Date();
+            const createdAtTimestamp = audit.createdAt;
+            const createdAt =
+              createdAtTimestamp && createdAtTimestamp._seconds
+              ? new Date(createdAtTimestamp._seconds * 1000).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  second: "numeric",
+                  hour12: true,
+                })
+              : "Invalid Date";
 
             return {
               id: audit.id,
-              clientName: audit.generalInformation.clientName,
-              websiteURL: audit.generalInformation.websiteURL,
-              generalInformation: audit.generalInformation,
-              createdAt: createdAt.toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-                hour12: true,
-              }),
+              clientName: clientName,
+              websiteURL: audit.result?.URL,
+              createdAt,
             };
           });
 
@@ -58,7 +62,7 @@ const HistoryPage = () => {
         setIsLoading(false);
         console.error(err);
       });
-  }, [data]);
+  }, [session]);
 
   return (
     <div className="text-center">

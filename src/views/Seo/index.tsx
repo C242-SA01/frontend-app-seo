@@ -10,13 +10,11 @@ interface AuditHistoryItem {
 
 interface AuditHistoryProps {
   data: AuditHistoryItem[];
-  userEmail: string; // Tambahkan props untuk email user
+  userEmail?: string; // Tambahkan props untuk email user dengan default value
 }
 
-const AuditHistory: React.FC<AuditHistoryProps> = ({ data, userEmail }) => {
-  const [selectedAudit, setSelectedAudit] = useState<AuditHistoryItem | null>(
-    null
-  );
+const AuditHistory: React.FC<AuditHistoryProps> = ({ data, userEmail = 'Unknown User' }) => {
+  const [selectedAudit, setSelectedAudit] = useState<AuditHistoryItem | null>(null);
 
   // Function to close the modal
   const closeModal = () => setSelectedAudit(null);
@@ -57,32 +55,26 @@ const AuditHistory: React.FC<AuditHistoryProps> = ({ data, userEmail }) => {
                 onClick={() => setSelectedAudit(item)}
               >
                 <td className="px-4 py-2 border-b border-gray-300">
-                  {item.clientName}
+                  {item.clientName ?? "Unknown"}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-300">
                   <a
-                    href={item.websiteURL}
+                    href={item.websiteURL ?? "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 underline"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {item.websiteURL}
+                    {item.websiteURL ?? "Unknown"}
                   </a>
                 </td>
                 <td className="px-4 py-2 border-b border-gray-300">
-                  {item.createdAt}
+                  {item.createdAt ?? "Unknown"}
                 </td>
                 <td className="px-4 py-2 text-center border-b border-gray-300">
                   <Link
                     href={`/history/${item.id}`} // Menggunakan URL dinamis berdasarkan ID
                   >
-                    {/* <Link
-                    href={{
-                      pathname: "/history",
-                      query: { id: item.id, email: userEmail },
-                    }}
-                  > */}
                     <button
                       className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
                       onClick={(e) => e.stopPropagation()}
@@ -105,11 +97,15 @@ const AuditHistory: React.FC<AuditHistoryProps> = ({ data, userEmail }) => {
 
       {/* Modal Detail */}
       {selectedAudit && (
-        <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-          <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="mb-4 text-lg font-bold">
-              {selectedAudit.clientName}
-            </h3>
+        <div
+          className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
+          onClick={closeModal} // Menutup modal ketika background overlay di klik
+        >
+          <div
+            className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg"
+            onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup jika modalnya sendiri di klik
+          >
+            <h3 className="mb-4 text-lg font-bold">{selectedAudit.clientName}</h3>
             <p className="mb-4">
               <strong>Website URL:</strong>{" "}
               <a
