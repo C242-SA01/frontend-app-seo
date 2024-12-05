@@ -1,3 +1,6 @@
+// src/pages/results.tsx
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import AdditionalNotes from "@/components/AdditionalNotes";
 import AuditScore from "@/components/AuditScore";
 import ContentAnalysis from "@/components/ContentAnalysis";
@@ -7,83 +10,114 @@ import PerformanceMetrics from "@/components/PerformanceMetrics";
 import Recommendation from "@/components/Recommendation";
 
 const ResultPage: React.FC = () => {
-  const generalInfo = {
-    clientName: "Client Y",
-    websiteURL: "http://google.com",
-    structure: 50,
+  const router = useRouter();
+  const auditResult = router.query.auditResult ? JSON.parse(router.query.auditResult as string) : null;
+  const [clientName, setClientName] = useState("Guest");
+  const auditDate = new Date().toLocaleString();
+
+  useEffect(() => {
+    const storedClientName = localStorage.getItem("clientName");
+    if (storedClientName) {
+      setClientName(storedClientName);
+    }
+  }, []);
+
+  console.log("Ini adalah audit result", auditResult);
+
+  if (!auditResult) {
+    return <p>Loading...</p>;
+  }
+
+  // Akses auditResult dengan memeriksa struktur JSON yang benar
+  const auditData = auditResult['Audit Data']; // Mengambil objek 'Audit Data' dari auditResult
+  const actionableRecommendations = auditResult['Actionable Recommendations'];
+  const notesAnalysis = auditResult['Notes Analysis'];
+
+  if (!auditData) {
+    return <p>Data tidak ditemukan</p>;
+  }
+
+  const getDescription = (grade: string) => {
+    switch (grade) {
+      case 'A':
+        return 'Sangat Baik';
+      case 'B':
+        return 'Baik';
+      case 'C':
+        return 'Cukup';
+      case 'D':
+        return 'Kurang';
+      case 'E':
+        return 'Sangat Kurang';
+      default:
+        return 'Tidak Diketahui';
+    }
   };
-  const scoreInfo = {
-    score: "A",
-    description: "Sangat Baik",
-  };
-  const metrics = [
-    { name: "GTMetrix Grade", value: "A" },
-    { name: "GTMetrix Performance", value: "85%" },
-    { name: "GTMetrix Structure", value: "90%" },
-    { name: "PageSpeed Performance", value: "90%" },
-    { name: "PageSpeed Accessibility", value: "75%" },
-    { name: "PageSpeed Best Practices", value: "82%" },
-    { name: "PageSpeed SEO", value: "82%" },
-  ];
-  const metadataData = [
-    { label: "Meta Title", value: "Example Page Title" },
-    { label: "Meta Title Count", value: 1 },
-    { label: "Meta Description", value: "Example meta description." },
-    { label: "Meta Description Count", value: 1 },
-    { label: "Heading Count", value: "" },
-    { label: "H1", value: 1 },
-    { label: "H2", value: 0 },
-    { label: "H3", value: 1 },
-    { label: "H4", value: 0 },
-    { label: "H5", value: 1 },
-    { label: "H6", value: 1 },
-    { label: "Meta Robots", value: "Yes" },
-    { label: "Meta Keywords", value: "example, keywords" },
-    { label: "Open Graph Status", value: "Implemented" },
-    { label: "Canonical Tag Present", value: "Yes" },
-    { label: "Sitemap Present", value: "Yes" },
-    { label: "Robots.txt Present", value: "Yes" },
-    { label: "Google Search Console Connected", value: "Yes" },
-    { label: "Favicon Present", value: "Yes" },
-  ];
-  const contentAnalysisData = [
-    { label: "Broken Links Count", value: 3 },
-    {
-      label: "Broken Links URL",
-      value: (
-        <a href="https://example.com/broken-links" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-          https://example.com/broken-links
-        </a>
-      ),
-    },
-    { label: "Duplicate Content Percentage", value: "12%" },
-    { label: "Common Content Percentage", value: "45%" },
-    { label: "Unique Content Percentage", value: "43%" },
-    { label: "Mobile Friendly", value: "Yes" },
-  ];
+
   return (
     <>
       <h1 className="my-8 text-2xl font-bold text-center">Here Your Audit Result</h1>
       <div className="grid grid-flow-row-dense grid-cols-3 grid-rows-1 gap-4 m-8 md:grid-cols-3">
         <div className="col-span-2">
-          <GeneralInfo {...generalInfo} />
+          <GeneralInfo
+            clientName={clientName}
+            URL={auditData.URL}
+            auditDate={auditDate}
+          />
         </div>
-        {/* Audit Score (4/12) */}
-        <AuditScore {...scoreInfo} />
+        <AuditScore
+          Grade={auditData.Grade}
+          description={getDescription(auditData.Grade)}
+        />
       </div>
 
-      <PerformanceMetrics metrics={metrics} />
+      <PerformanceMetrics
+        metrics={[
+          { name: "GTMetrix Performance", value: auditData.Performance },
+          { name: "GTMetrix Structure", value: auditData.Structure },
+          { name: "PageSpeed Performance", value: auditData.Performance },
+          { name: "PageSpeed Accessibility", value: auditData.Accessibility },
+          { name: "PageSpeed Best Practices", value: auditData["Best Practices"] },
+          { name: "PageSpeed SEO", value: auditData.SEO },
+        ]}
+      />
       <div className="m-8">
-        <ContentAnalysis contentData={contentAnalysisData} />
+        <ContentAnalysis
+          contentData={[
+            { label: "Broken Links Count", value: auditData["Broken Link Count"] },
+            { label: "Duplicate Content Percentage", value: auditData["Duplicate Count Percentage"] },
+            { label: "Common Content Percentage", value: auditData["Common Count Percentage"] },
+            { label: "Unique Content Percentage", value: auditData["Unique Count Percentage"] },
+            { label: "Mobile Friendly", value: auditData["Mobile Friendly"] },
+          ]}
+        />
       </div>
       <div className="m-8">
-        <MetadataTable metadata={metadataData} />
+        <MetadataTable
+          metadata={[
+            { label: "Meta Title", value: auditData["Meta title"] },
+            { label: "Meta Title Count", value: auditData["Meta title count"] },
+            { label: "Meta Description", value: auditData["Meta description"] },
+            { label: "Meta Description Count", value: auditData["Meta description count"] },
+            { label: "H1 Count", value: auditData["H1 count"] },
+            { label: "H2 Count", value: auditData["H2 count"] },
+            { label: "H3 Count", value: auditData["H3 count"] },
+            { label: "Meta Robots", value: auditData["Meta robots"] },
+            { label: "Meta Keywords", value: auditData["Meta keywords"] },
+            { label: "Open Graph Status", value: auditData["Open Graph Status"] },
+            { label: "Canonical Tag Present", value: auditData["Canonical Tag Present"] },
+            { label: "Sitemap Present", value: auditData["Sitemap Present"] },
+            { label: "Robots.txt Present", value: auditData["Robots.txt Present"] },
+            { label: "Google Search Console Connected", value: auditData["Google Search Console Connected"] },
+            { label: "Favicon Present", value: auditData["Favicon Present"] },
+          ]}
+        />
       </div>
       <div className="m-8">
-        <AdditionalNotes />
+        <AdditionalNotes notes={notesAnalysis} />
       </div>
       <div className="m-8">
-        <Recommendation />
+        <Recommendation recommendations={actionableRecommendations} />
       </div>
     </>
   );

@@ -14,6 +14,10 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
 
   useEffect(() => {
     setActiveSection(router.pathname);
+    if (data && data.user && data.user.name) {
+      setUsername(data.user.name);
+      localStorage.setItem("clientName", data.user.name); // Simpan ke localStorage
+    }
   }, [router.pathname]);
 
   return (
@@ -93,7 +97,7 @@ const Navbar: React.FC<{ isHomePage: boolean }> = ({ isHomePage }) => {
               <button className="mr-4 btn btn-outline outline-transparent" onClick={() => signIn()}>
                 Login
               </button>
-              <a className="text-white btn bg-primary" href="/register">
+              <a className="text-white btn bg-primary" href="/auth/register">
                 Register
               </a>
             </>

@@ -1,10 +1,49 @@
 // src/components/Homepage.tsx
 import Image from "next/image";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
 import FeaturesSection from "./features";
 import BackToTopButton from "../BackToTopButton";
 
 const Homepage: React.FC = () => {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [inputURL, setInputURL] = useState("");
+
+  useEffect(() => {
+    // Check if the user is authenticated (e.g., using local storage)
+    const userToken = localStorage.getItem('userToken');
+    setIsAuthenticated(!!userToken);
+  }, []);
+
+  const handleStartNow = async () => {
+    // Hapus pengecekan userToken untuk sementara
+    if (inputURL) {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/audit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: inputURL }),
+        });
+        if (response.ok) {
+          const auditResult = await response.json();
+          router.push({
+            pathname: '/results',
+            query: { auditResult: JSON.stringify(auditResult) },
+          });
+        } else {
+          console.error('Failed to audit URL');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } else {
+      console.error('No URL provided');
+    }
+  };  
+
   return (
     <div>
       {/* Main Page Section */}
@@ -14,8 +53,18 @@ const Homepage: React.FC = () => {
           We are a team of talented SEO optimization digital marketers, dedicated to helping your business grow, rank higher, and achieve outstanding results in the digital landscape.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-3xl">
-          <input type="text" placeholder="Enter the link, domain, or URL here" className="p-4 border border-gray-300 rounded-md w-full sm:w-3/4 mb-4 sm:mb-0 sm:mr-4" />
-          <button className="w-full sm:w-auto px-8 py-4 bg-yellow-500 text-black font-semibold rounded-md hover:bg-yellow-600 transition duration-300">Start Now</button>
+          <input 
+            type="text" 
+            placeholder="Enter the link, domain, or URL here" 
+            value={inputURL}
+            onChange={(e) => setInputURL(e.target.value)}
+            className="p-4 border border-gray-300 rounded-md w-full sm:w-3/4 mb-4 sm:mb-0 sm:mr-4" 
+          />
+          <button
+            onClick={handleStartNow}
+            className="w-full sm:w-auto px-8 py-4 bg-yellow-500 text-black font-semibold rounded-md hover:bg-yellow-600 transition duration-300">
+            Start Now
+          </button>
         </div>
       </section>
 
