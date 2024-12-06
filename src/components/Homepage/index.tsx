@@ -129,7 +129,7 @@ const Homepage: React.FC = () => {
 
           {/* Bagian Gambar Placeholder */}
           <div className="w-1/2">
-            <Image src="/images/G.png" alt="Impact Placeholder" width={500} height={500} className="object-contain w-full h-auto rounded-lg shadow-lg" />
+            <Image src="/images/Our Impact.png" alt="Impact Placeholder" width={500} height={500} className="object-contain w-full h-auto rounded-lg shadow-lg" />
           </div>
         </div>
       </section>
@@ -143,7 +143,7 @@ const Homepage: React.FC = () => {
             { name: 'Denny Irawan',
               role: 'Student',
               tech: 'Cloud Computing', 
-              image: '/images/O.png', 
+              image: '/images/dennyirawan.png', 
               social: [
                 { platform: 'whatsapp', link: '' },
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/denny-irawan22/' },
@@ -153,7 +153,7 @@ const Homepage: React.FC = () => {
             { name: 'Liem, Ivan Budiono',
               role: 'Student',
               tech: 'Cloud Computing',
-              image: '/images/N.png',
+              image: '/images/ivanbudiono.png',
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/ivanbudiono/'},
@@ -163,7 +163,7 @@ const Homepage: React.FC = () => {
             { name: 'Lintang Iqhtiar Dwi Mawarni',
               role: 'Student',
               tech: 'Machine Learning',
-              image: '/images/S.png',
+              image: '/images/lintangmawarni.png',
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/lintang-iqhtiar-13b7t1995/'},
@@ -173,11 +173,11 @@ const Homepage: React.FC = () => {
             { name: 'Egbert Tjandra',
               role: 'Student',
               tech: 'Machine Learning', 
-              image: '/images/P.png', 
+              image: '/images/egberttjandra.png', 
               social: [
                 { platform: 'whatsapp', link: ''},
                 { platform: 'linkedin', link: 'https://www.linkedin.com/in/egbert-tjandra-ba192432a/'},
-                { platform: 'instagram', link: ''},
+                { platform: 'instagram', link: 'https://www.instagram.com/egbertjandra35?igsh=MW9jb2dvaTVjOWkzcg%3D%3D&utm_source=qr'},
               ],
             },
           ].map((member, index) => (
@@ -187,7 +187,7 @@ const Homepage: React.FC = () => {
                 alt={`${member.name} photo`}
                 width={500}
                 height={500}
-                className="rounded-md mb-4 object-cover"
+                className="rounded-md mb-4 object-cover aspect-square" 
               />
               <h3 className="text-2xl font-bold text-black mb-2">{member.name}</h3>
               <p className="font-semibold text-black mb-1">{member.role}</p>

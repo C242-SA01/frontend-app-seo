@@ -9,6 +9,7 @@ type HistoryType = {
   clientName: string;
   websiteURL: string;
   createdAt: string;
+  createdAtTimestamp: number;
 };
 
 const HistoryPage = () => {
@@ -30,30 +31,35 @@ const HistoryPage = () => {
       .then((response) => {
         setIsLoading(false);
         if (response.status) {
-          const mappedHistories = response.data.map((audit: any) => {
-            const createdAtTimestamp = audit.createdAt;
+          const mappedHistories: HistoryType[] = response.data.map((audit: any) => {
+            const createdAtTimestamp = audit.createdAt?._seconds ?? 0;
             const createdAt =
-              createdAtTimestamp && createdAtTimestamp._seconds
-              ? new Date(createdAtTimestamp._seconds * 1000).toLocaleString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  second: "numeric",
-                  hour12: true,
-                })
-              : "Invalid Date";
+              createdAtTimestamp !== 0
+                ? new Date(createdAtTimestamp * 1000).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                    hour12: true,
+                  })
+                : "Invalid Date";
 
             return {
               id: audit.id,
               clientName: clientName,
               websiteURL: audit.result?.URL,
               createdAt,
+              createdAtTimestamp,
             };
           });
 
-          setHistories(mappedHistories);
+          const sortedHistories = mappedHistories.sort(
+            (a, b) => a.createdAtTimestamp - b.createdAtTimestamp
+          );
+
+          setHistories(sortedHistories);
         } else {
           console.error(response.message);
         }
