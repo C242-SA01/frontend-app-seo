@@ -2,14 +2,12 @@ interface GeneralInfoProps {
   clientName: string;
   URL: string;
   auditDate: string
-  // Structure: any;
 }
 
 const GeneralInfo: React.FC<GeneralInfoProps> = ({
   clientName,
   URL,
   auditDate,
-  // Structure,
 }) => {
   return (
     <div className="h-full p-4 mb-4 bg-white rounded-lg shadow">
@@ -30,10 +28,6 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({
             <td className="w-1/2 px-4 py-3 font-semibold border-r">Date</td>
             <td className="w-1/2 px-4 py-3">{auditDate}</td>
           </tr>
-          {/* <tr className="bg-gray-50">
-            <td className="px-4 py-2">GTMetrix Structure </td>
-            <td className="px-4 py-2">{Structure} %</td>
-          </tr> */}
         </tbody>
       </table>
     </div>

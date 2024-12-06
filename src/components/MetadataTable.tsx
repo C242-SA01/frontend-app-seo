@@ -13,7 +13,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({ metadata }) => {
   }
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
+    <div className="p-4 m-8 bg-white rounded-lg shadow">
       <h2 className="py-3 mb-4 text-xl font-bold text-center text-black rounded-lg bg-primary">Metadata</h2>
       <table className="w-full border-collapse">
         <tbody>

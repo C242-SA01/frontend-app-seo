@@ -7,7 +7,7 @@ interface RecommendationProps {
 const Recommendation: React.FC<RecommendationProps> = ({ recommendations }) => {
   const recommendationsArray = recommendations.split(/\d+\.\s/).filter((rec) => rec.trim() !== "");
   return (
-    <div className="p-2 bg-white rounded-lg shadow-lg">
+    <div className="p-4 m-8 bg-white rounded-lg shadow-lg">
       <h2 className="py-3 mb-4 text-xl font-bold text-center text-black rounded-lg bg-primary">Recommendations</h2>
         <ol className="list-decimal list-inside">
           {recommendationsArray.map((rec, index) => (

@@ -9,7 +9,7 @@ interface ContentAnalysisProps {
 
 const ContentAnalysis: React.FC<ContentAnalysisProps> = ({ contentData = [] }) => {
   return (
-    <div className="p-4 bg-white rounded-lg shadow-lg">
+    <div className="p-4 m-8 bg-white rounded-lg shadow-lg">
       {/* Header Tabel */}
       <h2 className="py-3 mb-4 text-xl font-bold text-center text-black rounded-lg bg-primary">Content Analysis</h2>
       <table className="w-full border-collapse table-auto">
